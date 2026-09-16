@@ -24,13 +24,15 @@ jobs:
           packages: ''
 
       - name: Install Android SDK packages
-        run: |
+        run: | 
           sdkmanager "platform-tools"
           sdkmanager "platforms;android-35"
           sdkmanager "build-tools;35.0.0"
 
-      - name: Make Gradle executable
-        run: chmod +x gradlew
+      - name: Build APK
+  run: |
+    chmod +x ./gradlew
+    ./gradlew assembleDebug
 
       - name: Build APK
         run: ./gradlew assembleDebug
