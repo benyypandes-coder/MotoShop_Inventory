@@ -1,4 +1,4 @@
-name: Build KURT MOTOSHOP V1
+name: Build Kurt MotoShop APK
 
 on:
   workflow_dispatch:
@@ -8,13 +8,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Download project
         uses: actions/checkout@v4
-
-      - name: Extract KURT MOTOSHOP project
-        run: |
-          mkdir -p bundle
-          unzip -q Kurt_MotoShop_V1_GitHub_Upload.zip -d bundle
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -22,25 +17,26 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.11.1'
-
       - name: Set up Android SDK
         uses: android-actions/setup-android@v4
+        with:
+          cmdline-tools-version: 12266719
+          packages: ''
 
-      - name: Install Android SDK
+      - name: Install Android SDK packages
         run: |
-          yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+          sdkmanager "platform-tools"
+          sdkmanager "platforms;android-35"
+          sdkmanager "build-tools;35.0.0"
+
+      - name: Make Gradle executable
+        run: chmod +x gradlew
 
       - name: Build APK
-        working-directory: bundle/project
-        run: gradle assembleDebug
+        run: ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: KURT-MOTOSHOP-V1-APK
-          path: bundle/project/app/build/outputs/apk/debug/app-debug.apk
+          name: Kurt-MotoShop-V1-APK
+          path: app/build/outputs/apk/debug/*.apk
